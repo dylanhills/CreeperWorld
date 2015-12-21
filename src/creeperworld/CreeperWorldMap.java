@@ -62,9 +62,10 @@ public class CreeperWorldMap {
     
     //emitters
     private ArrayList<Emitter> emitters = new ArrayList<Emitter>();
-    private final int numEmitters = 2;
-    private final int highEmitAmount = 3;
-    private final int lowEmitAmount = 1;
+    private final int highNumEmitters = 3;
+    private final int lowNumEmitters = 1;
+    private final int highEmitAmount = 30;
+    private final int lowEmitAmount = 10;
     private final int highEmitProbability = 50;
     private final int lowEmitProbability = 30;    
     
@@ -72,11 +73,12 @@ public class CreeperWorldMap {
     private final float creeperColorOpacity = 0.6f;//between .3 and .8
     private final boolean displayCreeperValues = false;
     private final double expectedCreeperHeight = 20.0;//used for computing color of squares with creeper
-    
+    private final Color creeperColor = new Color(0,0,255);
+
     //double buffering
     private boolean evenFrame = true;
     
-    //constructor
+    //constructors
     public CreeperWorldMap(){
         this(30,30);
     }
@@ -95,8 +97,8 @@ public class CreeperWorldMap {
                 creeperAmount2[i][j] = 0;
             }
         }
-//        createTerrain();
-//        populateEmitters();
+        createTerrain();
+        populateEmitters();
 //        printTerrain();
     }
 
@@ -291,10 +293,8 @@ public class CreeperWorldMap {
         int numFlatBottomCraters = randomNumberInclusive(lowNumFBC,highNumFBC);
         int flatBottomCraterDepth;
         int flatBottomCraterRadius;
-        System.out.println(numMountains);
         for(int i = 0; i<numMountains; i++){
             mountainHeight = randomNumberInclusive(lowHeightMountains,highHeightMountains);
-            System.out.println("mt height = "+mountainHeight);
             addMountain(mountainHeight);
         }
         for(int i = 0; i<numPlateus; i++){
@@ -331,7 +331,31 @@ public class CreeperWorldMap {
         //System.out.println("The difference between ("+a+","+b+") and ("+c+","+d+") is "+diff);
         return diff;
     }
-
+    public void restart(){
+        for(int i = 0; i<height; i++){
+            for(int j = 0; j<width; j++){
+                creeperAmount[i][j] = 0;
+            }
+        }
+        
+    }
+    public JPanel getMap(){
+        JPanel myPanel = new JPanel(new GridLayout(height,width));
+        JPanel[][] thePanels = new JPanel[height][width];
+        for(int i = 0; i<height; i++){
+            for(int j = 0; j<width; j++){
+                thePanels[i][j] = new JPanel();
+                Color mapColor = getMapColor(terrain[i][j]);
+                float ratio = (float)(creeperColorOpacity +creeperAmount[i][j]/expectedCreeperHeight);
+                if(ratio > 1){ratio = 1;}
+                if(ratio < 0 || creeperAmount[i][j] == 0){ratio = 0;}
+                thePanels[i][j].setBackground(blend(mapColor,creeperColor,ratio));
+                if(displayCreeperValues){thePanels[i][j].add(new JLabel(String.format("%.2f", creeperAmount[i][j])));}
+                myPanel.add(thePanels[i][j]);
+            }
+        }
+        return myPanel;
+    }
     public void displayTerrain(){
         JFrame myFrame = new JFrame();
         myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -341,7 +365,6 @@ public class CreeperWorldMap {
             for(int j = 0; j<width; j++){
                 thePanels[i][j] = new JPanel();
                 Color mapColor = getMapColor(terrain[i][j]);
-                Color creeperColor = getCreeperColor();
                 float ratio = (float)(creeperColorOpacity +creeperAmount[i][j]/expectedCreeperHeight);
                 if(ratio > 1){ratio = 1;}
                 if(ratio < 0 || creeperAmount[i][j] == 0){ratio = 0;}
@@ -356,28 +379,7 @@ public class CreeperWorldMap {
         
     }
 
-    public void displayTerrainDB(){
-        JFrame myFrame = new JFrame();
-        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel gridPanel = new JPanel(new GridLayout(height,width));
-        JPanel[][] thePanels = new JPanel[height][width];
-        for(int i = 0; i<height; i++){
-            for(int j = 0; j<width; j++){
-                thePanels[i][j] = new JPanel();
-                thePanels[i][j].setBackground(getMapColor(terrain[i][j]));
-                if(evenFrame){thePanels[i][j].add(new JLabel(String.format("%.2f", creeperAmount1[i][j])));}
-                else{thePanels[i][j].add(new JLabel(String.format("%.2f", creeperAmount2[i][j])));}
-                gridPanel.add(thePanels[i][j]);
-            }
-        }
-        myFrame.add(gridPanel);
-        myFrame.setBounds(0,0,700,700);
-        myFrame.setVisible(true);
-        
-    }
-    private Color getCreeperColor(){
-        return new Color(0,0,255);
-    }
+
 
     private Color getMapColor(int myInt){
         //return new Color(0,0,myInt*20);
@@ -416,11 +418,11 @@ public class CreeperWorldMap {
     }
 
     public void populateEmitters(){
+        int numEmitters = randomNumberInclusive(lowNumEmitters,highNumEmitters);
         for(int i = 0; i<numEmitters; i++){
             Emitter temp = new Emitter(randomNumberInclusive(0,height-1),randomNumberInclusive(0,width-1));
             temp.setEmitAmmount(randomNumberInclusive(lowEmitAmount,highEmitAmount));
             temp.setEmitProbability((((double)randomNumberInclusive(lowEmitProbability,highEmitProbability))/100));
-            System.out.println(temp.getEmitProbability());
             emitters.add(temp);
         }
     }
@@ -528,36 +530,6 @@ public class CreeperWorldMap {
         }
     }
 
-    public void updateGB(){
-        int x,y;
-        if(evenFrame){
-            //cause emitters to emit
-            for(int i = 0; i<emitters.size(); i++){
-                x = emitters.get(i).getxCoord();
-                y = emitters.get(i).getyCoord();
-                creeperAmount2[y][x] = emitters.get(i).getEmitAmmount();
-            }
-            for(int i = 0; i<terrain.length; i++){
-                for(int j = 0; j<terrain[0].length; j++){
-                    creeperAmount1[i][j] = computeCreeperHeightAverage(i,j,creeperAmount2);
-                }
-            }
-            evenFrame = false;
-        }
-        else{
-            //cause emitters to emit
-            for(int i = 0; i<emitters.size(); i++){
-                x = emitters.get(i).getxCoord();
-                y = emitters.get(i).getyCoord();
-                creeperAmount1[y][x] = emitters.get(i).getEmitAmmount();
-            }
-            for(int i = 0; i<terrain.length; i++){
-                for(int j = 0; j<terrain[0].length; j++){
-                    creeperAmount2[i][j] = computeCreeperHeightAverage(i,j,creeperAmount1);
-                }
-            }
-            evenFrame = true;
-        }
-    }
+
 }
 
