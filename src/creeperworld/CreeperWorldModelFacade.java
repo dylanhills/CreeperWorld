@@ -1,38 +1,54 @@
 package creeperworld;
 
-//import esof322.a2.CreeperWorld;
-//import esof322.a2.CreeperWorldView;
-//import esof322.a2.InputListener;
 public class CreeperWorldModelFacade {
-    
+    private Thread gameThread;
+    private boolean theadPaused = false;
     private CreeperWorldGame game;
     private CreeperWorldView view;
     
-    CreeperWorldModelFacade(CreeperWorldView CWV) { // we initialize
+    private int FRAME_DURATION = 200;
+    
+    public CreeperWorldModelFacade(CreeperWorldView CWV) {
         view = CWV;
         game = new CreeperWorldGame(this);
+        
+        
+        gameThread = new Thread("gameThread"){
+            public void run(){
+                while(true){
+                    try {
+                        while(theadPaused){
+                            sleep(0);
+                        }
+                        sleep(FRAME_DURATION);
+                        game.stepForward();
+                        update();
+                        }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                
+            }
+        };
+        gameThread.start();
     }
     public void update() {
-        //listener.send("u");
         view.updateMap(game.getMap());
     }
-    public void start() {
-        game.start();
-        
-    }
     public void play() {
-        // TODO Auto-generated method stub
-        
+        theadPaused = false;
     }
 
     public void pause() {
-        // TODO Auto-generated method stub
-        
+        theadPaused = true;
     }
+    
     public void stepForward(){
         game.stepForward();
         update();
     }
+    
     public void restart() {
         game.restartMap();
         update();
@@ -41,6 +57,9 @@ public class CreeperWorldModelFacade {
     public void newMap() {
         game.newMap();
         update();
+    }
+    public void setFrameDuration(int fs){
+        FRAME_DURATION = fs;
     }
 }
 

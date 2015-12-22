@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class CreeperWorldMap {
+public class CreeperWorldMap{
     //global variables
     
     //the map
@@ -529,6 +529,7 @@ public class CreeperWorldMap {
             }
         }
     }
+
 
 
 }

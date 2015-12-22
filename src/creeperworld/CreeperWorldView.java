@@ -26,10 +26,14 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
     JButton pauseButton = new JButton("Pause");
     JButton restartButton = new JButton("Restart");
     JButton newMapButton = new JButton("New Map");
-    JButton startButton = new JButton("Start");
-
+    JButton speedX2Button = new JButton("X2");
+    JButton speedX1Button = new JButton("X1");
+    JButton speedX10Button = new JButton("X10");
+    
     BorderLayout myBorderLayout = new BorderLayout();
     CreeperWorldModelFacade model;
+    
+    
     public void updateMap(JPanel myPanel){
         if(myBorderLayout.getLayoutComponent(BorderLayout.CENTER) != null){
                 remove(myBorderLayout.getLayoutComponent(BorderLayout.CENTER));
@@ -41,8 +45,6 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
         System.out.println("displaying current map");
     }
     public CreeperWorldView() {
-        model = new CreeperWorldModelFacade(this);
-
         setTitle("CreeperWorld");
         setVisible(true);
         setBounds(0,0,900,900);
@@ -54,17 +56,26 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
         pauseButton.addActionListener(this);
         restartButton.addActionListener(this);
         newMapButton.addActionListener(this);
-        startButton.addActionListener(this);
+        speedX2Button.addActionListener(this);
+        speedX1Button.addActionListener(this);
+        speedX10Button.addActionListener(this);
         
         userInputPanel.add(stepForwardButton);
         userInputPanel.add(playButton);
         userInputPanel.add(pauseButton);
         userInputPanel.add(restartButton);
         userInputPanel.add(newMapButton);
-        userInputPanel.add(startButton);
+        userInputPanel.add(speedX2Button);
+        userInputPanel.add(speedX1Button);
+        userInputPanel.add(speedX10Button);
+
         
         userInputPanel.setBackground(Color.red);
         add(userInputPanel,BorderLayout.SOUTH);
+
+        
+        model = new CreeperWorldModelFacade(this);
+        model.newMap();
     }
 
     @Override
@@ -82,9 +93,12 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
             model.restart();
         }if(ae.getSource() == newMapButton){
             model.newMap();
-        }if(ae.getSource() == startButton){
-            System.out.println("start");
-            model.start();
+        }if(ae.getSource() == speedX2Button){
+            model.setFrameDuration(100);
+        }if(ae.getSource() == speedX1Button){
+            model.setFrameDuration(200);
+        }if(ae.getSource() == speedX10Button){
+            model.setFrameDuration(20);
         }
     }
 
@@ -116,34 +130,6 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
         // TODO Auto-generated method stub
         
     }
-/*
-    // Private methods-------------------------------------------
-
-    public void displayCurrentInfo() {
-        viewArea.setText(model.getView());
-        carryingArea.setText(model.getItems());
-        actionArea.setText(model.getAction());
-    }
-
-    // Left as an exercise.
-    private void grab() {
-        // Set up a dialog to talk to the model and
-        // determine what items to pick up.
-        model.grab();
-        //carryingArea.setText(model.getItems());
-    }
-
-    // Left as an exercise.
-    private void drop() {
-        // Set up a dialog to talk to the model and
-        // determine what items to pick up.
-        model.drop();
-    }
-    
-    public void startQuest() {
-        model.setGUI(this);
-        model.startQuest();
-    }*/
     @Override
     public void keyPressed(KeyEvent arg0) {
         System.out.println("key pressed");
