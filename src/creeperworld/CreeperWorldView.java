@@ -29,15 +29,17 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
     JButton speedX2Button = new JButton("X2");
     JButton speedX1Button = new JButton("X1");
     JButton speedX10Button = new JButton("X10");
+    JButton addLaserTurretButton = new JButton("Add Laser Turret");
+    JButton addMortarTurretButton = new JButton("Add Mortar Turret");
     
     BorderLayout myBorderLayout = new BorderLayout();
     CreeperWorldModelFacade model;
-    
     
     public void updateMap(JPanel myPanel){
         if(myBorderLayout.getLayoutComponent(BorderLayout.CENTER) != null){
                 remove(myBorderLayout.getLayoutComponent(BorderLayout.CENTER));
         }
+        myPanel.addMouseListener(this);
         add(myPanel,BorderLayout.CENTER);
         revalidate();
     }
@@ -47,7 +49,7 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
     public CreeperWorldView() {
         setTitle("CreeperWorld");
         setVisible(true);
-        setBounds(0,0,900,900);
+        setBounds(0,0,1000,1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(myBorderLayout);
         
@@ -59,6 +61,9 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
         speedX2Button.addActionListener(this);
         speedX1Button.addActionListener(this);
         speedX10Button.addActionListener(this);
+        addLaserTurretButton.addActionListener(this);
+        addMortarTurretButton.addActionListener(this);
+
         
         userInputPanel.add(stepForwardButton);
         userInputPanel.add(playButton);
@@ -68,6 +73,8 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
         userInputPanel.add(speedX2Button);
         userInputPanel.add(speedX1Button);
         userInputPanel.add(speedX10Button);
+        userInputPanel.add(addLaserTurretButton);
+        userInputPanel.add(addMortarTurretButton);
 
         
         userInputPanel.setBackground(Color.red);
@@ -83,13 +90,10 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
         if(ae.getSource() == stepForwardButton){
             model.stepForward();
         }if(ae.getSource() == playButton){
-            System.out.println("play");
             model.play();
         }if(ae.getSource() == pauseButton){
-            System.out.println("pause");
             model.pause();
         }if(ae.getSource() == restartButton){
-            System.out.println("restart");
             model.restart();
         }if(ae.getSource() == newMapButton){
             model.newMap();
@@ -99,28 +103,34 @@ public class CreeperWorldView extends JFrame implements MouseListener,ActionList
             model.setFrameDuration(200);
         }if(ae.getSource() == speedX10Button){
             model.setFrameDuration(20);
+        }if(ae.getSource() == addLaserTurretButton){
+            model.setBuildingTurret(0);
+        }if(ae.getSource() == addMortarTurretButton){
+            model.setBuildingTurret(1);
         }
     }
 
     @Override
-    public void mouseClicked(MouseEvent arg0) {
-        System.out.println("mouse clicked"); 
+    public void mouseClicked(MouseEvent me) {
+        //System.out.println("X = "+me.getX());
+        //System.out.println("Y = "+me.getY());
+        
     }
 
     @Override
-    public void mouseEntered(MouseEvent arg0) {
+    public void mouseEntered(MouseEvent me) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void mouseExited(MouseEvent arg0) {
+    public void mouseExited(MouseEvent me) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void mousePressed(MouseEvent arg0) {
+    public void mousePressed(MouseEvent me) {
         // TODO Auto-generated method stub
         
     }

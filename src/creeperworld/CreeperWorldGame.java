@@ -20,13 +20,28 @@ public class CreeperWorldGame{
         return map.getMap();
     }
     public void newMap(){
-        map = new CreeperWorldMap(50,50);
+        map = new CreeperWorldMap(40,40);
     }
     public void restartMap(){
         map.restart();
     }
     public void stepForward(){
         map.update();
+    }
+    public void addTurret(int x, int y){
+        if(map.getTypeOfTurretToBuild() == map.laserTurretCode){
+            map.addLaserTurret(x, y);
+        }
+        else if(map.getTypeOfTurretToBuild() == map.mortarTurretCode){
+            map.addMortarTurret(x, y);
+        }
+        else if(map.getTypeOfTurretToBuild() == map.otherTurretCode){
+//            map.addOtherTurret(x,y);
+        }
+        
+    }
+    public void setTypeOfTurretToBuild(int input){
+        map.setTypeOfTurretToBuild(input);
     }
 }
 

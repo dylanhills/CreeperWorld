@@ -2,10 +2,10 @@ package creeperworld;
 
 public class CreeperWorldModelFacade {
     private Thread gameThread;
-    private boolean theadPaused = false;
+    private boolean theadPaused = true;
     private CreeperWorldGame game;
     private CreeperWorldView view;
-    
+    private boolean buildingTurret = false;
     private int FRAME_DURATION = 200;
     
     public CreeperWorldModelFacade(CreeperWorldView CWV) {
@@ -60,6 +60,12 @@ public class CreeperWorldModelFacade {
     }
     public void setFrameDuration(int fs){
         FRAME_DURATION = fs;
+    }
+    public void addTurret(int x, int y){
+        game.addTurret(x, y);
+    }
+    public void setBuildingTurret(int input){
+        game.setTypeOfTurretToBuild(input);
     }
 }
 
